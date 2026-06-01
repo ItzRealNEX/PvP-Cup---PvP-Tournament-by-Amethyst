@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AMETHYST | PVP CUP RANKING</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root { --cyan: #00f2ff; --violet: #8b5cf6; --void: #020203; --obsidian: #0a0a0c; }
+    body { font-family: 'Inter', sans-serif; background: var(--void); color: white; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--void); }
+    ::-webkit-scrollbar-thumb { background: #1a1a1e; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #27272a; }
+    .cat-btn.active { background: var(--cyan); color: black; }
+    .player-row:hover { background: rgba(255,255,255,0.02); border-color: rgba(0,242,255,0.15); }
+    .featured-card:hover .skin-img { filter: grayscale(0%) !important; transform: scale(1.08); }
+    .featured-card:hover { border-color: rgba(139,92,246,0.3) !important; }
+    .duo-featured:hover .skin-img { filter: grayscale(0%) !important; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    .fade-up { animation: fadeUp 0.5s ease forwards; opacity: 0; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-2 h-8" style="background:var(--cyan)"></div>
+        <span class="font-black text-xl lg:text-2xl tracking-tighter italic">AMETHYST</span>
+      </div>
+      <div class="flex gap-6 text-[11px] font-bold tracking-[0.3em] uppercase">
+        <span style="color:var(--cyan)">Lobby</span>
+        <a href="https://discord.gg/V8GSQT4bxD" target="_blank" class="text-zinc-500 hover:text-white transition-colors">Discord</a>
+        <a href="https://www.youtube.com/@NexItzOff" target="_blank" class="text-zinc-500 hover:text-white transition-colors hidden sm:block">YouTube</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="relative pt-28 pb-20 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
+
+    <!-- HERO -->
+    <section class="relative mb-20 min-h-[45vh] flex flex-col justify-end overflow-hidden">
+      <div class="absolute top-1/4 left-0 w-full font-black text-[18vw] leading-none pointer-events-none select-none overflow-hidden"
+        style="-webkit-text-stroke:1px rgba(255,255,255,0.04); color:transparent;">SUPREMACY</div>
+      <div class="relative z-10 px-2 fade-up">
+        <h1 class="text-5xl sm:text-7xl lg:text-9xl font-black tracking-tighter mb-4 text-white leading-[0.9]">
+          PvP Cup Tournament<span style="color:var(--cyan)"></span>
+        </h1>
+        <p class="text-zinc-500 max-w-xl font-medium text-sm lg:text-lg uppercase tracking-[0.2em]">nex: hola chat ♥️ </p>
+      </div>
+    </section>
+
+    <!-- FILTER HUD -->
+    <div class="sticky top-20 z-50 mb-10 flex flex-col md:flex-row gap-3 items-center justify-between p-2 rounded-2xl border border-white/5 backdrop-blur-xl" style="background:rgba(10,10,12,0.6)">
+      <div class="relative w-full md:w-80">
+        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="search" placeholder="BUSCAR JUGADOR..." oninput="render()"
+          class="w-full bg-transparent border-none py-3.5 pl-11 pr-4 text-xs font-bold tracking-widest focus:outline-none text-white placeholder:text-zinc-700" />
+      </div>
+      <div class="flex gap-1.5 p-1 rounded-xl overflow-x-auto" style="background:rgba(0,0,0,0.5)">
+        <button onclick="setCategory('Global',this)" class="cat-btn active px-4 lg:px-6 py-2.5 text-[10px] font-black tracking-widest uppercase rounded-lg transition-all whitespace-nowrap">🏆 Global</button>
+        <button onclick="setCategory('PvP Cup',this)" class="cat-btn px-4 lg:px-6 py-2.5 text-[10px] font-black tracking-widest uppercase rounded-lg transition-all whitespace-nowrap text-zinc-500 hover:text-white">⚔️ PvP Cup</button>
+        <button onclick="setCategory('2v2 Cup',this)" class="cat-btn px-4 lg:px-6 py-2.5 text-[10px] font-black tracking-widest uppercase rounded-lg transition-all whitespace-nowrap text-zinc-500 hover:text-white">🤝 2v2 Cup</button>
+      </div>
+    </div>
+
+    <!-- TIER MATRIX -->
+    <div id="matrix" class="flex flex-col gap-10"></div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-32 border-t border-white/5 bg-black py-16 px-6 lg:px-10">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+      <div class="font-black tracking-tighter text-4xl italic" style="color:rgba(255,255,255,0.04)">Amethyst Studio</div>
+      <p class="text-[10px] text-zinc-600 font-bold tracking-[0.2em] text-center uppercase">© 2026 Amethyst Studio · Not an official Minecraft product</p>
+      <div class="flex gap-4">
+        <a href="https://discord.gg/V8GSQT4bxD" target="_blank" class="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-zinc-500 hover:text-white transition-all text-sm">D</a>
+        <a href="https://x.com/NexItzOff" target="_blank" class="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-zinc-500 hover:text-white transition-all text-sm">X</a>
+        <a href="https://www.youtube.com/@NexItzOff" target="_blank" class="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-zinc-500 hover:text-white transition-all text-sm">Y</a>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  const DATA = {
+    "Global": [
+      { rank:1, name:"ItzCrixs",         tier:"S", rating:156, meta:"All-Round Elite" },
+      { rank:2, name:"Roier2007",        tier:"S", rating:150, meta:"Strategic Combatant" },
+      { rank:3, name:"Itzkaneki76_",             tier:"A", rating:132, meta:"Pot Master" },
+      { rank:4, name:"ezequielking2007",          tier:"A", rating:101, meta:"Axe Discipline" },
+      { rank:5, name:"D4n_07X",          tier:"B", rating:66, meta:"Versatile Fighter" },
+      { rank:6, name:"MESSIRVE1023",             tier:"B", rating:56, meta:"Blade Virtuoso" },
+      { rank:7, name:"Robledo9837",           tier:"C", rating:44, meta:"Rising Contender" },
+      { rank:8, name:"NexItz",   tier:"C", rating:35, meta:"Nethop Prodigy" },
+      { rank:9, name:"ItzPizzaKICK",           tier:"D", rating:29, meta:"Tactical Mind" },
+      { rank:10,name:"MrAdam2323",   tier:"D", rating:21, meta:"Close-Range Specialist" },
+      { rank:10,name:"SideGool",   tier:"D", rating:21, meta:"Close-Range Specialist" },
+      { rank:10,name:"SepiMC",   tier:"D", rating:14, meta:"Close-Range Specialist" },
+      { rank:10,name:"zValee",   tier:"D", rating:13, meta:"Close-Range Specialist" },
+      { rank:10,name:"Cesar7812",   tier:"D", rating:12, meta:"Close-Range Specialist" },
+      { rank:10,name:"AtowGoated",   tier:"D", rating:12, meta:"Close-Range Specialist" },
+      { rank:10,name:"Vnxsitoow",   tier:"D", rating:10, meta:"Close-Range Specialist" },
+      { rank:10,name:"MrNahart",   tier:"D", rating:10, meta:"Close-Range Specialist" },
+      { rank:10,name:"DonJuan49",   tier:"D", rating:10, meta:"Close-Range Specialist" },
+      { rank:10,name:"Tqnen",   tier:"D", rating:10, meta:"Close-Range Specialist" },
+      { rank:10,name:"Serevyn",   tier:"D", rating:10, meta:"Close-Range Specialist" },
+      { rank:10,name:"lomonaco8890",   tier:"D", rating:10, meta:"Close-Range Specialist" },
+      { rank:10,name:"Matiascai",   tier:"D", rating:10, meta:"Close-Range Specialist" },
+      { rank:10,name:"Brokenm4n",   tier:"D", rating:0, meta:"Close-Range Specialist" }
+    ],
+    "PvP Cup": [
+      { rank:1, name:"ItzCrixs",         tier:"S", rating:0, meta:"All-Round Elite" },
+      { rank:2, name:"Roier2007",        tier:"S", rating:0, meta:"Strategic Combatant" },
+      { rank:3, name:"Itzkaneki76_",             tier:"A", rating:0, meta:"Pot Master" },
+      { rank:4, name:"ezequielking2007",          tier:"A", rating:0, meta:"Axe Discipline" },
+      { rank:5, name:"D4n_07X",          tier:"B", rating:0, meta:"Versatile Fighter" },
+      { rank:6, name:"MESSIRVE1023",             tier:"B", rating:0, meta:"Blade Virtuoso" },
+      { rank:7, name:"Robledo9837",           tier:"C", rating:0, meta:"Rising Contender" },
+      { rank:8, name:"NexItz",   tier:"C", rating:0, meta:"Nethop Prodigy" },
+      { rank:9, name:"ItzPizzaKICK",           tier:"D", rating:0, meta:"Tactical Mind" },
+      { rank:10,name:"MrAdam2323",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"SideGool",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"SepiMC",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"zValee",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"Cesar7812",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"AtowGoated",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"Vnxsitoow",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"MrNahart",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"DonJuan49",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"Tqnen",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"Serevyn",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"lomonaco8890",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"Matiascai",   tier:"D", rating:0, meta:"Close-Range Specialist" },
+      { rank:10,name:"Brokenm4n",   tier:"D", rating:0, meta:"Close-Range Specialist" }
+    ],
+    "2v2 Cup": [
+      { rank:1, name:"ezequielking2007",     partner:"Dylantrol01", tier:"S", rating:0, meta:"Dominant Duo" },
+      { rank:2, name:"Itzkaneki76_",        partner:"Robledo9837",        tier:"A", rating:0, meta:"Blade & Axe" },
+      { rank:3, name:"D4n_07X",        partner:"nood",         tier:"A", rating:0, meta:"Pot Seekers" },
+      { rank:4, name:"ItzCrixs",     partner:"MrAdam2323",      tier:"B", rating:0, meta:"Tactical Duo" },
+      { rank:5, name:"ItzPizzaKICK",      partner:"Luis", tier:"B", rating:0, meta:"Rising Team" },
+      { rank:6, name:"ColdyXT",      partner:"Roier2007", tier:"C", rating:0, meta:"Rising Team" },
+      { rank:7, name:"MESSIRVE1023",      partner:"Capy", tier:"C", rating:0, meta:"Rising Team" },
+      { rank:8, name:"SideGool",      partner:"Kael", tier:"D", rating:0, meta:"Rising Team" },
+    ]
+  };
+
+  const TIER_CFG = {
+    S: { label:"The Ascendant",  color:"#8b5cf6", line:"rgba(139,92,246,0.5)"  },
+    A: { label:"The Enforcers",  color:"#00f2ff", line:"rgba(0,242,255,0.5)"   },
+    B: { label:"The Contenders", color:"#22c55e", line:"rgba(34,197,94,0.5)"   },
+    C: { label:"The Initiates",  color:"#f59e0b", line:"rgba(245,158,11,0.5)"  },
+    D: { label:"The Unranked",   color:"#71717a", line:"rgba(113,113,122,0.5)" }
+  };
+
+  const TIER_BADGE = {
+    S: { bg:"rgba(139,92,246,0.1)", border:"rgba(139,92,246,0.2)", text:"#a78bfa" },
+    A: { bg:"rgba(0,242,255,0.1)",  border:"rgba(0,242,255,0.2)",  text:"#67e8f9" },
+    B: { bg:"rgba(34,197,94,0.1)",  border:"rgba(34,197,94,0.2)",  text:"#4ade80" },
+    C: { bg:"rgba(245,158,11,0.1)", border:"rgba(245,158,11,0.2)", text:"#fbbf24" },
+    D: { bg:"rgba(113,113,122,0.1)",border:"rgba(113,113,122,0.2)",text:"#a1a1aa" }
+  };
+
+  let currentCat = "Global";
+
+  function skin(name, size=40) {
+    return `https://mc-heads.net/avatar/${encodeURIComponent(name)}/${size}`;
+  }
+
+  function featuredCard(p) {
+    const b = TIER_BADGE[p.tier];
+    return `
+      <div class="featured-card border border-white/5 p-8 rounded-3xl max-w-xs mx-auto w-full transition-all duration-500 cursor-default"
+        style="background:linear-gradient(145deg,rgba(139,92,246,0.05) 0%,rgba(0,0,0,0) 100%); box-shadow:0 0 40px -10px rgba(139,92,246,0.15)">
+        <div class="flex justify-between items-start mb-8">
+          <span class="text-[10px] font-black px-3 py-1 rounded-full tracking-widest uppercase border"
+            style="background:${b.bg}; color:${b.text}; border-color:${b.border}">ELITE</span>
+          <span class="font-black italic text-4xl" style="color:rgba(255,255,255,0.04)">01</span>
+        </div>
+        <div class="w-28 h-28 rounded-2xl mb-5 mx-auto border border-white/5 overflow-hidden transition-transform duration-500" style="background:#0a0a0c">
+          <img src="${skin(p.name,100)}" alt="${p.name}" class="skin-img w-full h-full p-3 transition-all duration-500" style="filter:grayscale(100%)"
+            onerror="this.src='https://mc-heads.net/avatar/MHF_Steve/100'">
+        </div>
+        <h3 class="text-xl font-black text-center mb-1 tracking-tight uppercase">${p.name}</h3>
+        <p class="text-zinc-600 text-[10px] font-bold text-center tracking-[0.15em] uppercase">${p.meta}</p>
+        <div class="mt-4 text-center">
+          <span class="text-white font-black text-sm">${p.rating.toLocaleString()}</span>
+          <span class="text-zinc-600 text-[10px] ml-1 font-bold">PTS</span>
+        </div>
+      </div>`;
+  }
+
+  function duoFeaturedCard(p) {
+    const b = TIER_BADGE[p.tier];
+    return `
+      <div class="duo-featured border border-white/5 p-8 rounded-3xl max-w-lg mx-auto w-full transition-all duration-500 cursor-default"
+        style="background:linear-gradient(145deg,rgba(139,92,246,0.05) 0%,rgba(0,0,0,0) 100%); box-shadow:0 0 40px -10px rgba(139,92,246,0.15)">
+        <div class="flex justify-between items-start mb-8">
+          <span class="text-[10px] font-black px-3 py-1 rounded-full tracking-widest uppercase border"
+            style="background:${b.bg}; color:${b.text}; border-color:${b.border}">DUO ELITE</span>
+          <span class="font-black italic text-4xl" style="color:rgba(255,255,255,0.04)">01</span>
+        </div>
+        <div class="flex items-center justify-center gap-6 mb-5">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-24 h-24 rounded-2xl border border-white/5 overflow-hidden transition-transform duration-500" style="background:#0a0a0c">
+              <img src="${skin(p.name,100)}" alt="${p.name}" class="skin-img w-full h-full p-3 transition-all duration-500" style="filter:grayscale(100%)"
+                onerror="this.src='https://mc-heads.net/avatar/MHF_Steve/100'">
+            </div>
+            <h3 class="text-base font-black uppercase tracking-tight">${p.name}</h3>
+          </div>
+          <span class="font-black text-2xl mb-8" style="color:var(--cyan)">&amp;</span>
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-24 h-24 rounded-2xl border border-white/5 overflow-hidden transition-transform duration-500" style="background:#0a0a0c">
+              <img src="${skin(p.partner,100)}" alt="${p.partner}" class="skin-img w-full h-full p-3 transition-all duration-500" style="filter:grayscale(100%)"
+                onerror="this.src='https://mc-heads.net/avatar/MHF_Steve/100'">
+            </div>
+            <h3 class="text-base font-black uppercase tracking-tight">${p.partner || '???'}</h3>
+          </div>
+        </div>
+        <p class="text-zinc-600 text-[10px] font-bold text-center tracking-[0.15em] uppercase mb-3">${p.meta}</p>
+        <div class="text-center">
+          <span class="text-white font-black text-sm">${p.rating.toLocaleString()}</span>
+          <span class="text-zinc-600 text-[10px] ml-1 font-bold">PTS</span>
+        </div>
+      </div>`;
+  }
+
+  function compactRow(p, delay=0) {
+    const b = TIER_BADGE[p.tier];
+    return `
+      <div class="player-row flex items-center gap-4 px-4 py-3 rounded-xl border transition-all duration-300 cursor-default" 
+        style="border-color:rgba(255,255,255,0.03); animation:fadeUp 0.4s ease ${delay}s forwards; opacity:0">
+        <span class="text-zinc-700 font-black text-xs w-6 text-right flex-shrink-0">${p.rank}</span>
+        <div class="w-10 h-10 rounded-lg overflow-hidden border border-white/5 flex-shrink-0" style="background:#0a0a0c">
+          <img src="${skin(p.name)}" alt="${p.name}" class="w-full h-full object-cover"
+            onerror="this.src='https://mc-heads.net/avatar/MHF_Steve/40'">
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 class="font-bold text-sm tracking-tight text-zinc-300 truncate">${p.name}</h4>
+          <span class="text-[9px] font-bold text-zinc-600 tracking-widest uppercase">${p.meta}</span>
+        </div>
+        <span class="text-[10px] font-black px-2.5 py-1 rounded-full border tracking-widest uppercase hidden sm:block flex-shrink-0"
+          style="background:${b.bg}; color:${b.text}; border-color:${b.border}">${p.tier}</span>
+        <span class="text-sm font-black text-white w-16 text-right flex-shrink-0">${p.rating.toLocaleString()}</span>
+      </div>`;
+  }
+
+  function duoRow(p, delay=0) {
+    const b = TIER_BADGE[p.tier];
+    return `
+      <div class="player-row flex items-center gap-4 px-4 py-3.5 rounded-xl border transition-all duration-300 cursor-default"
+        style="border-color:rgba(255,255,255,0.03); animation:fadeUp 0.4s ease ${delay}s forwards; opacity:0">
+        <span class="text-zinc-700 font-black text-xs w-6 text-right flex-shrink-0">${p.rank}</span>
+        <div class="flex items-center flex-shrink-0">
+          <div class="w-10 h-10 rounded-lg overflow-hidden border border-white/5 relative z-10" style="background:#0a0a0c">
+            <img src="${skin(p.name)}" alt="${p.name}" class="w-full h-full object-cover"
+              onerror="this.src='https://mc-heads.net/avatar/MHF_Steve/40'">
+          </div>
+          <div class="w-10 h-10 rounded-lg overflow-hidden border border-white/5 -ml-3" style="background:#0a0a0c">
+            <img src="${skin(p.partner||'MHF_Steve')}" alt="${p.partner}" class="w-full h-full object-cover"
+              onerror="this.src='https://mc-heads.net/avatar/MHF_Steve/40'">
+          </div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-1.5">
+            <h4 class="font-black text-sm tracking-tight text-white">${p.name}</h4>
+            <span class="text-[10px] font-black" style="color:var(--cyan)">&amp;</span>
+            <h4 class="font-black text-sm tracking-tight text-white">${p.partner||'???'}</h4>
+          </div>
+          <span class="text-[9px] font-bold text-zinc-600 tracking-widest uppercase">${p.meta}</span>
+        </div>
+        <span class="text-[10px] font-black px-2.5 py-1 rounded-full border tracking-widest uppercase hidden sm:block flex-shrink-0"
+          style="background:${b.bg}; color:${b.text}; border-color:${b.border}">${p.tier}</span>
+        <span class="text-sm font-black text-white w-16 text-right flex-shrink-0">${p.rating.toLocaleString()}</span>
+      </div>`;
+  }
+
+  function buildTierSection(tier, players, is2v2) {
+    if (!players.length) return '';
+    const cfg = TIER_CFG[tier];
+    let content = '';
+
+    if (is2v2) {
+      const top = players[0];
+      const rest = players.slice(1);
+      if (tier === 'S') content += duoFeaturedCard(top);
+      else content += duoRow(top, 0);
+      if (rest.length) {
+        content += `<div class="flex flex-col gap-2 ${tier==='S'?'mt-4':''}">`;
+        rest.forEach((p,i) => { content += duoRow(p, (i+1)*0.05); });
+        content += '</div>';
+      }
+    } else {
+      const top = players[0];
+      const rest = players.slice(1);
+      if (tier === 'S') content += featuredCard(top);
+      else content += compactRow(top, 0);
+      if (rest.length) {
+        content += `<div class="flex flex-col gap-2 ${tier==='S'?'mt-4':''}">`;
+        rest.forEach((p,i) => { content += compactRow(p, (i+1)*0.05); });
+        content += '</div>';
+      }
+    }
+
+    return `
+      <div class="mb-10">
+        <div class="flex items-end gap-4 mb-6">
+          <h2 class="text-5xl lg:text-6xl font-black italic leading-none" style="color:${cfg.color}">${tier}</h2>
+          <span class="text-zinc-700 font-bold tracking-[0.4em] mb-1.5 uppercase text-[11px]">${cfg.label}</span>
+          <div class="h-px flex-1 mb-3" style="background:linear-gradient(to right,${cfg.line},transparent)"></div>
+        </div>
+        ${content}
+      </div>`;
+  }
+
+  function render() {
+    const q = document.getElementById('search').value.toLowerCase();
+    const players = DATA[currentCat] || [];
+    const is2v2 = currentCat === '2v2 Cup';
+    const filtered = q
+      ? players.filter(p => p.name.toLowerCase().includes(q) || (p.partner||'').toLowerCase().includes(q))
+      : players;
+
+    const groups = { S:[], A:[], B:[], C:[], D:[] };
+    filtered.forEach(p => { if (groups[p.tier]) groups[p.tier].push(p); });
+
+    let html = '';
+    ['S','A','B','C','D'].forEach(t => {
+      html += buildTierSection(t, groups[t], is2v2);
+    });
+
+    if (!filtered.length) {
+      html = `<div class="text-center py-32 text-zinc-700 font-bold tracking-widest uppercase">Ningún combatiente encontrado</div>`;
+    }
+
+    document.getElementById('matrix').innerHTML = html;
+  }
+
+  function setCategory(cat, btn) {
+    currentCat = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => {
+      b.classList.remove('active');
+      b.style.color = '';
+      b.style.background = '';
+      b.classList.add('text-zinc-500');
+    });
+    btn.classList.add('active');
+    btn.classList.remove('text-zinc-500');
+    document.getElementById('search').value = '';
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>
