@@ -138,32 +138,15 @@
       { rank:10,name:"Brokenm4n",   tier:"D", rating:0, meta:"Close-Range Specialist" }
     ],
     "2v2 Cup": [
-      { rank:1, name:"ezequielking2007",     partner:"Dylantrol01", tier:"S", rating:0, meta:"Dominant Duo" },
+      { rank:1, name:"ezequielking2007",     partner:"DylxnmcM", tier:"S", rating:0, meta:"Dominant Duo" },
       { rank:2, name:"Itzkaneki76_",        partner:"Robledo9837",        tier:"A", rating:0, meta:"Blade & Axe" },
-      { rank:3, name:"D4n_07X",        partner:"nood",         tier:"A", rating:0, meta:"Pot Seekers" },
+      { rank:3, name:"NexItz",        partner:"choniusd",         tier:"A", rating:0, meta:"Pot Seekers" },
       { rank:4, name:"ItzCrixs",     partner:"MrAdam2323",      tier:"B", rating:0, meta:"Tactical Duo" },
       { rank:5, name:"ItzPizzaKICK",      partner:"▁Luis845▁", tier:"B", rating:0, meta:"Tactical Duo" },
       { rank:6, name:"ColdyXT",      partner:"Roier2007", tier:"C", rating:0, meta:"Rising Team" },
-      { rank:7, name:"MESSIRVE1023",      partner:"Capy", tier:"C", rating:0, meta:"Rising Team" },
-      { rank:8, name:"SideGool",      partner:"Kael", tier:"D", rating:0, meta:"Rising Team" },
-      { rank:9, name:"NexItz",      partner:"rayhxq", tier:"D", rating:0, meta:"Rising Team" },
+      { rank:7, name:"MESSIRVE1023",      partner:"Capybara4280", tier:"C", rating:0, meta:"Rising Team" },
+      { rank:8, name:"SideGool",      partner:"oxkael", tier:"D", rating:0, meta:"Rising Team" }
     ]
-  };
-
-  const TIER_CFG = {
-    S: { label:"The Ascendant",  color:"#8b5cf6", line:"rgba(139,92,246,0.5)"  },
-    A: { label:"The Enforcers",  color:"#00f2ff", line:"rgba(0,242,255,0.5)"   },
-    B: { label:"The Contenders", color:"#22c55e", line:"rgba(34,197,94,0.5)"   },
-    C: { label:"The Initiates",  color:"#f59e0b", line:"rgba(245,158,11,0.5)"  },
-    D: { label:"The Unranked",   color:"#71717a", line:"rgba(113,113,122,0.5)" }
-  };
-
-  const TIER_BADGE = {
-    S: { bg:"rgba(139,92,246,0.1)", border:"rgba(139,92,246,0.2)", text:"#a78bfa" },
-    A: { bg:"rgba(0,242,255,0.1)",  border:"rgba(0,242,255,0.2)",  text:"#67e8f9" },
-    B: { bg:"rgba(34,197,94,0.1)",  border:"rgba(34,197,94,0.2)",  text:"#4ade80" },
-    C: { bg:"rgba(245,158,11,0.1)", border:"rgba(245,158,11,0.2)", text:"#fbbf24" },
-    D: { bg:"rgba(113,113,122,0.1)",border:"rgba(113,113,122,0.2)",text:"#a1a1aa" }
   };
 
   let currentCat = "Global";
@@ -173,13 +156,10 @@
   }
 
   function featuredCard(p) {
-    const b = TIER_BADGE[p.tier];
     return `
       <div class="featured-card border border-white/5 p-8 rounded-3xl max-w-xs mx-auto w-full transition-all duration-500 cursor-default"
         style="background:linear-gradient(145deg,rgba(139,92,246,0.05) 0%,rgba(0,0,0,0) 100%); box-shadow:0 0 40px -10px rgba(139,92,246,0.15)">
-        <div class="flex justify-between items-start mb-8">
-          <span class="text-[10px] font-black px-3 py-1 rounded-full tracking-widest uppercase border"
-            style="background:${b.bg}; color:${b.text}; border-color:${b.border}">ELITE</span>
+        <div class="flex justify-end items-start mb-8">
           <span class="font-black italic text-4xl" style="color:rgba(255,255,255,0.04)">01</span>
         </div>
         <div class="w-28 h-28 rounded-2xl mb-5 mx-auto border border-white/5 overflow-hidden transition-transform duration-500" style="background:#0a0a0c">
@@ -196,13 +176,10 @@
   }
 
   function duoFeaturedCard(p) {
-    const b = TIER_BADGE[p.tier];
     return `
       <div class="duo-featured border border-white/5 p-8 rounded-3xl max-w-lg mx-auto w-full transition-all duration-500 cursor-default"
         style="background:linear-gradient(145deg,rgba(139,92,246,0.05) 0%,rgba(0,0,0,0) 100%); box-shadow:0 0 40px -10px rgba(139,92,246,0.15)">
-        <div class="flex justify-between items-start mb-8">
-          <span class="text-[10px] font-black px-3 py-1 rounded-full tracking-widest uppercase border"
-            style="background:${b.bg}; color:${b.text}; border-color:${b.border}">DUO ELITE</span>
+        <div class="flex justify-end items-start mb-8">
           <span class="font-black italic text-4xl" style="color:rgba(255,255,255,0.04)">01</span>
         </div>
         <div class="flex items-center justify-center gap-6 mb-5">
@@ -230,8 +207,8 @@
       </div>`;
   }
 
+  // Sin badge de tier
   function compactRow(p, delay=0) {
-    const b = TIER_BADGE[p.tier];
     return `
       <div class="player-row flex items-center gap-4 px-4 py-3 rounded-xl border transition-all duration-300 cursor-default" 
         style="border-color:rgba(255,255,255,0.03); animation:fadeUp 0.4s ease ${delay}s forwards; opacity:0">
@@ -244,14 +221,12 @@
           <h4 class="font-bold text-sm tracking-tight text-zinc-300 truncate">${p.name}</h4>
           <span class="text-[9px] font-bold text-zinc-600 tracking-widest uppercase">${p.meta}</span>
         </div>
-        <span class="text-[10px] font-black px-2.5 py-1 rounded-full border tracking-widest uppercase hidden sm:block flex-shrink-0"
-          style="background:${b.bg}; color:${b.text}; border-color:${b.border}">${p.tier}</span>
         <span class="text-sm font-black text-white w-16 text-right flex-shrink-0">${p.rating.toLocaleString()}</span>
       </div>`;
   }
 
+  // Sin badge de tier
   function duoRow(p, delay=0) {
-    const b = TIER_BADGE[p.tier];
     return `
       <div class="player-row flex items-center gap-4 px-4 py-3.5 rounded-xl border transition-all duration-300 cursor-default"
         style="border-color:rgba(255,255,255,0.03); animation:fadeUp 0.4s ease ${delay}s forwards; opacity:0">
@@ -274,47 +249,7 @@
           </div>
           <span class="text-[9px] font-bold text-zinc-600 tracking-widest uppercase">${p.meta}</span>
         </div>
-        <span class="text-[10px] font-black px-2.5 py-1 rounded-full border tracking-widest uppercase hidden sm:block flex-shrink-0"
-          style="background:${b.bg}; color:${b.text}; border-color:${b.border}">${p.tier}</span>
         <span class="text-sm font-black text-white w-16 text-right flex-shrink-0">${p.rating.toLocaleString()}</span>
-      </div>`;
-  }
-
-  function buildTierSection(tier, players, is2v2) {
-    if (!players.length) return '';
-    const cfg = TIER_CFG[tier];
-    let content = '';
-
-    if (is2v2) {
-      const top = players[0];
-      const rest = players.slice(1);
-      if (tier === 'S') content += duoFeaturedCard(top);
-      else content += duoRow(top, 0);
-      if (rest.length) {
-        content += `<div class="flex flex-col gap-2 ${tier==='S'?'mt-4':''}">`;
-        rest.forEach((p,i) => { content += duoRow(p, (i+1)*0.05); });
-        content += '</div>';
-      }
-    } else {
-      const top = players[0];
-      const rest = players.slice(1);
-      if (tier === 'S') content += featuredCard(top);
-      else content += compactRow(top, 0);
-      if (rest.length) {
-        content += `<div class="flex flex-col gap-2 ${tier==='S'?'mt-4':''}">`;
-        rest.forEach((p,i) => { content += compactRow(p, (i+1)*0.05); });
-        content += '</div>';
-      }
-    }
-
-    return `
-      <div class="mb-10">
-        <div class="flex items-end gap-4 mb-6">
-          <h2 class="text-5xl lg:text-6xl font-black italic leading-none" style="color:${cfg.color}">${tier}</h2>
-          <span class="text-zinc-700 font-bold tracking-[0.4em] mb-1.5 uppercase text-[11px]">${cfg.label}</span>
-          <div class="h-px flex-1 mb-3" style="background:linear-gradient(to right,${cfg.line},transparent)"></div>
-        </div>
-        ${content}
       </div>`;
   }
 
@@ -326,16 +261,23 @@
       ? players.filter(p => p.name.toLowerCase().includes(q) || (p.partner||'').toLowerCase().includes(q))
       : players;
 
-    const groups = { S:[], A:[], B:[], C:[], D:[] };
-    filtered.forEach(p => { if (groups[p.tier]) groups[p.tier].push(p); });
-
-    let html = '';
-    ['S','A','B','C','D'].forEach(t => {
-      html += buildTierSection(t, groups[t], is2v2);
-    });
-
     if (!filtered.length) {
-      html = `<div class="text-center py-32 text-zinc-700 font-bold tracking-widest uppercase">Ningún combatiente encontrado</div>`;
+      document.getElementById('matrix').innerHTML =
+        `<div class="text-center py-32 text-zinc-700 font-bold tracking-widest uppercase">Ningún combatiente encontrado</div>`;
+      return;
+    }
+
+    const top = filtered[0];
+    const rest = filtered.slice(1);
+
+    let html = is2v2 ? duoFeaturedCard(top) : featuredCard(top);
+
+    if (rest.length) {
+      html += `<div class="flex flex-col gap-2 mt-4">`;
+      rest.forEach((p, i) => {
+        html += is2v2 ? duoRow(p, i * 0.05) : compactRow(p, i * 0.05);
+      });
+      html += `</div>`;
     }
 
     document.getElementById('matrix').innerHTML = html;
